@@ -1,0 +1,12 @@
+{
+	"name": "webcrawlerhttp",
+	"version": "1.0.0",
+	"main": "src/main.js",
+	"repository": "git@github.com:genzade/webcrawlerhttp.git",
+	"author": "Hamid Zadeh <hamidmamadzade@gmail.com>",
+	"license": "MIT",
+	"scripts": {
+		"start": "node src/main.js",
+		"test": "echo \"Error: no test specified\" && exit 1"
+	}
+}
