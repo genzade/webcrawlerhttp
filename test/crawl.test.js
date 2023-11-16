@@ -146,6 +146,5 @@ describe("getURLsFromHTML", () => {
 		const expected = [];
 
 		expect(actual).toEqual(expected);
-		expect(actual).toThrow("Error: Invalid URL");
 	});
 });

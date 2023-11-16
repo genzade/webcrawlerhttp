@@ -1,6 +1,28 @@
 const { JSDOM } = require("jsdom");
 
-async function crawlPage(currentURL) {
+async function crawlPage(baseURL, currentURL, pages) {
+	const baseURLObj = new URL(baseURL);
+	const currentURLObj = new URL(currentURL);
+
+	// If the base URL and current URL are not on the same domain, return.
+	if (baseURLObj.hostname !== currentURLObj.hostname) {
+		return pages;
+	}
+
+	const normalizedCurrentURL = normalizeURL(currentURL);
+
+	// If the page has already been crawled, increment the count and return.
+	if (pages[normalizedCurrentURL] > 0) {
+		pages[normalizedCurrentURL]++;
+		return pages;
+	}
+
+	// If the page has not been crawled, add it to the pages object and crawl it.
+	pages[normalizedCurrentURL] = 1;
+
+	console.log(`Crawling page: ${currentURL}`);
+
+	// Fetch the page and get the URLs from the HTML.
 	try {
 		const response = await fetch(currentURL);
 
@@ -16,10 +38,18 @@ async function crawlPage(currentURL) {
 			return;
 		}
 
-		console.log(await response.text());
+		const htmlBody = await response.text();
+		const nextUrls = getURLsFromHTML(htmlBody, baseURL);
+
+		// Recursively crawl the next URLs.
+		for (const nextUrl of nextUrls) {
+			await crawlPage(baseURL, nextUrl, pages);
+		}
 	} catch (error) {
 		console.log(`Error in fetch: ${error.message}, on page: ${currentURL}`);
 	}
+
+	return pages;
 }
 
 function getURLsFromHTML(htmlBody, baseURL) {
